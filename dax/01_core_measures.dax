@@ -1,0 +1,27 @@
+// Create these as separate measures in Power BI Desktop.
+// Cancellation logic: only Completed orders contribute to recognized revenue.
+Receita Bruta = CALCULATE(SUMX(fact_sales, fact_sales[Quantity] * fact_sales[UnitPrice]), fact_sales[Status] = "Completed")
+
+Receita Líquida = CALCULATE(SUMX(fact_sales, fact_sales[Quantity] * fact_sales[UnitPrice] * (1 - fact_sales[DiscountPct])), fact_sales[Status] = "Completed")
+
+Custo Reconhecido = CALCULATE(SUMX(fact_sales, fact_sales[Quantity] * fact_sales[UnitCost]), fact_sales[Status] = "Completed")
+
+Lucro Bruto = [Receita Líquida] - [Custo Reconhecido]
+
+Margem Bruta % = DIVIDE([Lucro Bruto], [Receita Líquida])
+
+Pedidos Concluídos = CALCULATE(DISTINCTCOUNT(fact_sales[OrderID]), fact_sales[Status] = "Completed")
+
+Ticket Médio = DIVIDE([Receita Líquida], [Pedidos Concluídos])
+
+Clientes Ativos = CALCULATE(DISTINCTCOUNT(fact_sales[CustomerID]), fact_sales[Status] = "Completed")
+
+Pedidos Cancelados = CALCULATE(DISTINCTCOUNT(fact_sales[OrderID]), fact_sales[Status] = "Cancelled")
+
+Taxa de Cancelamento % = DIVIDE([Pedidos Cancelados], DISTINCTCOUNT(fact_sales[OrderID]))
+
+Meta de Receita = SUM(fact_targets[RevenueTarget])
+
+Atingimento Meta % = DIVIDE([Receita Líquida], [Meta de Receita])
+
+Desvio da Meta = [Receita Líquida] - [Meta de Receita]
