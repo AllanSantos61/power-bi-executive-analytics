@@ -1,0 +1,17 @@
+// Requires dim_date[Date] to be a contiguous Date column, marked as Date table.
+// Use calendar-year comparison with year-level filter context.
+Receita YTD = TOTALYTD([Receita Líquida], dim_date[Date])
+
+Receita Ano Anterior = CALCULATE([Receita Líquida], SAMEPERIODLASTYEAR(dim_date[Date]))
+
+Crescimento YoY % = DIVIDE([Receita Líquida] - [Receita Ano Anterior], [Receita Ano Anterior])
+
+Receita Mês Anterior = CALCULATE([Receita Líquida], DATEADD(dim_date[Date], -1, MONTH))
+
+Crescimento MoM % = DIVIDE([Receita Líquida] - [Receita Mês Anterior], [Receita Mês Anterior])
+
+Lucro YTD = TOTALYTD([Lucro Bruto], dim_date[Date])
+
+Margem Ano Anterior % = CALCULATE([Margem Bruta %], SAMEPERIODLASTYEAR(dim_date[Date]))
+
+Variação Margem p.p. = ([Margem Bruta %] - [Margem Ano Anterior %]) * 100
