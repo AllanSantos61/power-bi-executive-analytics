@@ -1,0 +1,16 @@
+name: Synthetic dataset checks
+on:
+  push:
+  pull_request:
+jobs:
+  data-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate datasets
+        run: python scripts/generate_data.py
+      - name: Validate integrity
+        run: python -m unittest discover -s tests -v
