@@ -1,0 +1,18 @@
+Participação Receita % = DIVIDE([Receita Líquida], CALCULATE([Receita Líquida], ALLSELECTED(dim_product[ProductName])))
+
+Ranking Produto = RANKX(ALLSELECTED(dim_product[ProductName]), [Receita Líquida], , DESC, DENSE)
+
+Ranking Vendedor = RANKX(ALLSELECTED(dim_seller[SellerName]), [Receita Líquida], , DESC, DENSE)
+
+Receita por Cliente = DIVIDE([Receita Líquida], [Clientes Ativos])
+
+// Filter by CustomerID to avoid duplicate display names affecting the count.
+Clientes Recorrentes =
+COUNTROWS(
+    FILTER(
+        VALUES(dim_customer[CustomerID]),
+        CALCULATE([Pedidos Concluídos]) >= 2
+    )
+)
+
+Taxa Recorrência % = DIVIDE([Clientes Recorrentes], [Clientes Ativos])
